@@ -1,0 +1,12 @@
+resolver: lts-20.17
+
+packages:
+- .
+
+# extra-deps: []
+
+build:
+  haddock-arguments:
+    haddock-args:
+      - "--odir=doc"
+  haddock-deps: false
