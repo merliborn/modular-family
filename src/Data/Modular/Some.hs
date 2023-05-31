@@ -1,6 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module Data.Modular.Bunch (
+module Data.Modular.Some (
 
 ) where
 

@@ -6,7 +6,7 @@ Last update: 2023-05-31
 
 ## Modules
 
-- `Data.Modular.Bunch`
+- `Data.Modular.Some`
 
 ## Author
 

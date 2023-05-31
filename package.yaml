@@ -20,7 +20,7 @@ dependencies:
 library:
   source-dirs: src
   exposed-modules:
-    - Data.Modular.Bunch
+    - Data.Modular.Some
   other-modules:    []
   dependencies:     []
 
