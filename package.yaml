@@ -1,0 +1,37 @@
+name:         modular-family
+version:      0.1.0.0
+github:       ""
+license:      MIT
+license-file: LICENSE
+author:       "merliborn"
+maintainer:   "sourei.merlin@gmail.com"
+copyright:    "merliborn 2023-"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+synopsis:     A type for modular arithmetic with parametrized modular
+category:     Math
+
+dependencies:
+- base >= 4.11.1.0 && <5
+
+library:
+  source-dirs: src
+  exposed-modules:
+    - Data.Modular.Bunch
+  other-modules:    []
+  dependencies:     []
+
+tests:
+  modular-family-test:
+    main:
+    source-dirs:
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - modular-family
+    - doctest
