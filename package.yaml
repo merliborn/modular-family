@@ -1,6 +1,6 @@
 name:         modular-family
 version:      0.1.0.0
-github:       ""
+github:       "merliborn/modular-family"
 license:      MIT
 license-file: LICENSE
 author:       "merliborn"
@@ -26,8 +26,8 @@ library:
 
 tests:
   modular-family-test:
-    main:
-    source-dirs:
+    main:         Spec.hs
+    source-dirs:  test
     ghc-options:
     - -threaded
     - -rtsopts
