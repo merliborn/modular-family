@@ -15,7 +15,7 @@ synopsis:     A type for modular arithmetic with parametrized modular
 category:     Math
 
 dependencies:
-- base >= 4.11.1.0 && <5
+- base >= 4.18.0.0 && <5
 
 library:
   source-dirs: src
