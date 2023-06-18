@@ -60,6 +60,7 @@ pattern FNat :: Natural -> SNat n -> FinNat n
 pattern FNat i sn <- FN i sn
   where
     FNat i sn | fromSNat sn <= i = E.throw E.ValueOverflow
+              | fromSNat sn <= 0 = E.throw E.NonPositiveUpperBound
               | otherwise        = FN i sn
 
 {-|
