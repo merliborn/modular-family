@@ -54,7 +54,6 @@ import GHC.Real   (
 
 import qualified Data.Modular.Some.Exception as E
 import GHC.Err    (undefined)
-import Data.Modular.Some.Exception (FinNatException(ValueOverflow))
 
 data FinNat (n :: Nat) = FN Natural (SNat n)
 pattern FNat :: Natural -> SNat n -> FinNat n
