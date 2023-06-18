@@ -1,5 +1,5 @@
 name:         modular-family
-version:      0.1.0.0
+version:      0.2.0.0
 github:       "merliborn/modular-family"
 license:      MIT
 license-file: LICENSE
@@ -34,4 +34,4 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - modular-family
-    - doctest
+#    - doctest

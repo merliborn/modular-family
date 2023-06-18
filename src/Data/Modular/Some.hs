@@ -17,7 +17,7 @@
 -- {-# LANGUAGE GADTs #-}
 
 module Data.Modular.Some (
-    FinNat(FNat)
+    FinNat, pattern FNat
   , zero, boundSing
   , SomeFinNat, someFinNat
 ) where
@@ -31,6 +31,7 @@ import GHC.TypeNats(        -- base >= 4.18.0.0
   , SNat, pattern SNat
   , fromSNat
   , withSomeSNat
+  , withKnownNat
   )
 import Data.Kind  (Type)    -- base >= 4.9.0.0
 import Data.Proxy (Proxy(Proxy))   -- base >= 4.7.0.0
@@ -50,36 +51,50 @@ import Data.Function (
 import GHC.Real   (
     fromIntegral
   )
+
+import qualified Data.Modular.Some.Exception as E
 import GHC.Err    (undefined)
+import Data.Modular.Some.Exception (FinNatException(ValueOverflow))
 
-data FinNat (n :: Nat) = FNat Natural (SNat n)
+data FinNat (n :: Nat) = FN Natural (SNat n)
+pattern FNat :: Natural -> SNat n -> FinNat n
+pattern FNat i sn <- FN i sn
+  where
+    FNat i sn | fromSNat sn <= i = E.throw E.ValueOverflow
+              | otherwise        = FN i sn
 
+{-|
+  >>> fromFinNat zero
+  0
+-}
+fromFinNat :: FinNat n -> Natural
+fromFinNat (FN i _) = i
 zero :: forall n. (KnownNat n, (1::Nat) <= n) => FinNat n
-zero = FNat 0 natSing
+zero = FN 0 natSing
 boundSing :: FinNat n -> SNat n
-boundSing (FNat _ x) = x
+boundSing (FN _ x) = x
 upcast :: forall m n. (KnownNat n, KnownNat m, m <= n) => FinNat m -> FinNat n
-upcast (FNat i _) = FNat i (SNat @n)
+upcast (FN i _) = FN i (SNat @n)
 
 data SomeFinNat = forall n. SomeFinNat (FinNat n)
 someFinNat :: (Integral a, Integral b) => a -> b -> Maybe SomeFinNat
 someFinNat i n | n <= 0                     = Nothing
                | i <  0                     = Nothing
                | toInteger n <= toInteger i = Nothing
-               | otherwise                  = Just $ withSomeSNat (fromIntegral n) (\sn->SomeFinNat (FNat (fromIntegral i) sn))
+               | otherwise                  = Just $ withSomeSNat (fromIntegral n) (\sn->SomeFinNat (FN (fromIntegral i) sn))
 toFinNat :: forall a (n::Nat). (Integral a, KnownNat n) => a -> Maybe (FinNat n)
 toFinNat i | i < 0                                                = Nothing
            | toInteger (natVal (Proxy :: Proxy n)) <= toInteger i = Nothing
            | otherwise
-              = Just $ FNat (fromIntegral i) (SNat @n)
+              = Just $ FN (fromIntegral i) (SNat @n)
 
 instance Eq (FinNat n) where
-  FNat x _ == FNat y _ = x == y
+  FN x _ == FN y _ = x == y
 instance Ord (FinNat n) where
-  FNat x _ <= FNat y _ = x <= y
+  FN x _ <= FN y _ = x <= y
 instance (KnownNat n, (1::Nat) <= n) => Bounded (FinNat n) where
   minBound = zero
-  maxBound = FNat mo natSing
+  maxBound = FN mo natSing
     where
       mo = natVal (Proxy :: Proxy n) - 1
 
