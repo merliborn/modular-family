@@ -21,6 +21,7 @@ library:
   source-dirs: src
   exposed-modules:
     - Data.Modular.Some
+    - Data.Modular.Some.Exception
   other-modules:    []
   dependencies:     []
 
