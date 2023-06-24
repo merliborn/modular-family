@@ -18,12 +18,23 @@
 {-# LANGUAGE InstanceSigs #-}
 -- {-# LANGUAGE GADTs #-}
 
+{-|
+  Module    : Data.Modular.Some
+  Copyright : (c) merliborn 2023
+  License   : MIT
+
+  A type for finite natural numbers (experimental)
+-}
+
 module Data.Modular.Some (
+  -- * Finite Numbers (almost as set)
     FinNat, pattern FNat
   , zero, boundSing
   , upcast
+  -- * Existence type
   , SomeFinNat, someFinNat
   , toMaybeFinNat
+  -- * Conversion
   , CompatibleWithFNat(fromFinNat,toFinNat)
   , FinNat8, FinNat16, FinNat32, FinNat64
 ) where
@@ -65,7 +76,15 @@ import GHC.Real   (
 import qualified Data.Modular.Some.Exception as E
 import GHC.Err    (undefined)
 
+-- | A type of natural numbers at most @n@
 data FinNat (n :: Nat) = FN Natural (SNat n)
+{-|
+  Pattern/setter for 'FinNat' data
+
+  As an expression, @FNat i n@ throws exception
+  if (1) @i@ is larger than bound ('ValueOverflow')
+  or (2) @n@ is less than or equal to 0 ('NonPositiveUpperBound').
+-}
 pattern FNat :: Natural -> SNat n -> FinNat n
 pattern FNat i sn <- FN i sn
   where
@@ -111,6 +130,10 @@ type FinNat16 = FinNat (0x10000::Nat)
 type FinNat32 = FinNat (0x100000000::Nat)
 type FinNat64 = FinNat (0x10000000000000000::Nat)
 
+{-|
+  A class 'CompatibleWithFNat' is a class for conversion with 'FNat' types,
+  and a class for two methods: 'fromFinNat' and 'toFinNat'.
+-}
 class CompatibleWithFNat (n::Nat) a where
   fromFinNat :: FinNat n -> a
   toFinNat   :: KnownNat n => a -> FinNat n

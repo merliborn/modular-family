@@ -1,6 +1,14 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE NoStarIsType #-}
 
+{-|
+  Module    : Data.Modular.Some.Exception
+  Copyright : (c) merliborn 2023
+  License   : MIT
+
+  Exceptions for 'FinNat' data types
+-}
+
 module Data.Modular.Some.Exception (
     FinNatException(
       NonPositiveUpperBound,
