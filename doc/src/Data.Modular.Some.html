@@ -1,0 +1,416 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE NoImplicitPrelude #-}</span><span>
+</span><span id="line-2"></span><span class="hs-pragma">{-# LANGUAGE NoStarIsType #-}</span><span>
+</span><span id="line-3"></span><span class="hs-pragma">{-# LANGUAGE DataKinds #-}</span><span>
+</span><span id="line-4"></span><span class="hs-pragma">{-# LANGUAGE KindSignatures #-}</span><span>
+</span><span id="line-5"></span><span class="hs-comment">-- {-# LANGUAGE PolyKinds #-}</span><span>
+</span><span id="line-6"></span><span class="hs-comment">-- {-# LANGUAGE TypeFamilies #-}</span><span>
+</span><span id="line-7"></span><span class="hs-comment">-- {-# LANGUAGE RankNTypes #-}</span><span>
+</span><span id="line-8"></span><span class="hs-pragma">{-# LANGUAGE ScopedTypeVariables #-}</span><span>
+</span><span id="line-9"></span><span class="hs-pragma">{-# LANGUAGE TypeOperators #-}</span><span>
+</span><span id="line-10"></span><span class="hs-pragma">{-# LANGUAGE TypeApplications #-}</span><span>
+</span><span id="line-11"></span><span class="hs-pragma">{-# LANGUAGE MultiParamTypeClasses #-}</span><span>
+</span><span id="line-12"></span><span class="hs-comment">-- {-# LANGUAGE AllowAmbiguousTypes #-}</span><span>
+</span><span id="line-13"></span><span class="hs-comment">-- {-# LANGUAGE ViewPatterns #-}</span><span>
+</span><span id="line-14"></span><span class="hs-pragma">{-# LANGUAGE PatternSynonyms #-}</span><span>
+</span><span id="line-15"></span><span class="hs-pragma">{-# LANGUAGE UndecidableInstances #-}</span><span>
+</span><span id="line-16"></span><span class="hs-pragma">{-# LANGUAGE FlexibleInstances #-}</span><span>
+</span><span id="line-17"></span><span class="hs-pragma">{-# LANGUAGE ExistentialQuantification #-}</span><span>
+</span><span id="line-18"></span><span class="hs-pragma">{-# LANGUAGE InstanceSigs #-}</span><span>
+</span><span id="line-19"></span><span class="hs-comment">-- {-# LANGUAGE GADTs #-}</span><span>
+</span><span id="line-20"></span><span>
+</span><span id="line-21"></span><span class="annot"><span class="hs-comment">{-|
+  Module    : Data.Modular.Some
+  Copyright : (c) merliborn 2023
+  License   : MIT
+
+  A type for finite natural numbers (experimental)
+-}</span></span><span>
+</span><span id="line-28"></span><span>
+</span><span id="line-29"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Data.Modular.Some</span><span> </span><span class="hs-special">(</span><span>
+</span><span id="line-30"></span><span>  </span><span class="annot"><span class="hs-comment">-- * Finite Numbers (almost as set)</span></span><span>
+</span><span id="line-31"></span><span>    </span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier">FinNat</span></a></span><span class="hs-special">,</span><span> </span><span class="hs-keyword">pattern</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FNat"><span class="hs-identifier">FNat</span></a></span><span>
+</span><span id="line-32"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#zero"><span class="hs-identifier">zero</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#boundSing"><span class="hs-identifier">boundSing</span></a></span><span>
+</span><span id="line-33"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#upcast"><span class="hs-identifier">upcast</span></a></span><span>
+</span><span id="line-34"></span><span>  </span><span class="annot"><span class="hs-comment">-- * Existence type</span></span><span>
+</span><span id="line-35"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#SomeFinNat"><span class="hs-identifier">SomeFinNat</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#someFinNat"><span class="hs-identifier">someFinNat</span></a></span><span>
+</span><span id="line-36"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#toMaybeFinNat"><span class="hs-identifier">toMaybeFinNat</span></a></span><span>
+</span><span id="line-37"></span><span>  </span><span class="annot"><span class="hs-comment">-- * Conversion</span></span><span>
+</span><span id="line-38"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#CompatibleWithFNat"><span class="hs-identifier">CompatibleWithFNat</span></a></span><span class="hs-special">(</span><span class="annot"><a href="Data.Modular.Some.html#fromFinNat"><span class="hs-identifier">fromFinNat</span></a></span><span class="hs-special">,</span><span class="annot"><a href="Data.Modular.Some.html#toFinNat"><span class="hs-identifier">toFinNat</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-39"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FinNat8"><span class="hs-identifier">FinNat8</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FinNat16"><span class="hs-identifier">FinNat16</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FinNat32"><span class="hs-identifier">FinNat32</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FinNat64"><span class="hs-identifier">FinNat64</span></a></span><span>
+</span><span id="line-40"></span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-41"></span><span>
+</span><span id="line-42"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">GHC.TypeNats</span></span><span class="hs-special">(</span><span>        </span><span class="hs-comment">-- base &gt;= 4.18.0.0</span><span>
+</span><span id="line-43"></span><span>    </span><span class="annot"><span class="hs-identifier">Natural</span></span><span>
+</span><span id="line-44"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">Nat</span></span><span>
+</span><span id="line-45"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">KnownNat</span></span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">natSing</span></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">natVal</span></span><span>
+</span><span id="line-46"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">SomeNat</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">someNatVal</span></span><span>
+</span><span id="line-47"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="hs-keyword">type</span><span> </span><span class="annot"><span class="hs-operator">(&lt;=)</span></span><span>
+</span><span id="line-48"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">SNat</span></span><span class="hs-special">,</span><span> </span><span class="hs-keyword">pattern</span><span> </span><span class="annot"><span class="hs-identifier">SNat</span></span><span>
+</span><span id="line-49"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">fromSNat</span></span><span>
+</span><span id="line-50"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">withSomeSNat</span></span><span>
+</span><span id="line-51"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">withKnownNat</span></span><span>
+</span><span id="line-52"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-53"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Kind</span></span><span>  </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Type</span></span><span class="hs-special">)</span><span>    </span><span class="hs-comment">-- base &gt;= 4.9.0.0</span><span>
+</span><span id="line-54"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Proxy</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Proxy</span></span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Proxy</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span>   </span><span class="hs-comment">-- base &gt;= 4.7.0.0</span><span>
+</span><span id="line-55"></span><span>
+</span><span id="line-56"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">GHC.Num</span></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Num</span></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-57"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">GHC.Real</span></span><span>   </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Integral</span></span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">toInteger</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-58"></span><span>
+</span><span id="line-59"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Word</span></span><span> </span><span class="hs-special">(</span><span>
+</span><span id="line-60"></span><span>  </span><span class="annot"><span class="hs-identifier">Word8</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">Word16</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">Word32</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">Word64</span></span><span>
+</span><span id="line-61"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-62"></span><span>
+</span><span id="line-63"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Bool</span></span><span>
+</span><span id="line-64"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Maybe</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Maybe</span></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-65"></span><span>
+</span><span id="line-66"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Eq</span></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Eq</span></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-67"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Ord</span></span><span>   </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Ord</span></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-68"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">GHC.Enum</span></span><span>   </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Bounded</span></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-69"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Function</span></span><span> </span><span class="hs-special">(</span><span>
+</span><span id="line-70"></span><span>    </span><span class="annot"><span class="hs-operator">($)</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-operator">(.)</span></span><span>
+</span><span id="line-71"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-72"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">GHC.Real</span></span><span>   </span><span class="hs-special">(</span><span>
+</span><span id="line-73"></span><span>    </span><span class="annot"><span class="hs-identifier">fromIntegral</span></span><span>
+</span><span id="line-74"></span><span>  </span><span class="hs-special">)</span><span>
+</span><span id="line-75"></span><span>
+</span><span id="line-76"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><a href="Data.Modular.Some.Exception.html"><span class="hs-identifier">Data.Modular.Some.Exception</span></a></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">E</span></span><span>
+</span><span id="line-77"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">GHC.Err</span></span><span>    </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">undefined</span></span><span class="hs-special">)</span><span>
+</span><span id="line-78"></span><span>
+</span><span id="line-79"></span><span class="annot"><span class="hs-comment">-- | A type of natural numbers at most @n@</span></span><span>
+</span><span id="line-80"></span><span class="hs-keyword">data</span><span> </span><span id="FinNat"><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-var">FinNat</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679019413"><span class="annot"><a href="#local-6989586621679019413"><span class="hs-identifier hs-type">n</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Nat</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span id="FN"><span class="annot"><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-var">FN</span></a></span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Natural</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">SNat</span></span><span> </span><span class="annot"><a href="#local-6989586621679019413"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-81"></span><span class="annot"><span class="hs-comment">{-|
+  Pattern/setter for 'FinNat' data
+
+  As an expression, @FNat i n@ throws exception
+  if (1) @i@ is larger than bound ('ValueOverflow')
+  or (2) @n@ is less than or equal to 0 ('NonPositiveUpperBound').
+-}</span></span><span>
+</span><span id="line-88"></span><span class="hs-keyword">pattern</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FNat"><span class="hs-identifier hs-type">FNat</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679019318"><span class="annot"><span class="hs-identifier hs-type">Natural</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">SNat</span></span><span> </span><span class="annot"><a href="#local-6989586621679019318"><span class="hs-identifier hs-type">n</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679019318"><span class="hs-identifier hs-type">n</span></a></span></span><span>
+</span><span id="line-89"></span><span class="hs-keyword">pattern</span><span> </span><span id="FNat"><span id="%24mFNat"><span id="%24bFNat"><span class="annot"><span class="annottext">$mFNat :: forall {r} {n :: Natural}.
+FinNat n -&gt; (Natural -&gt; SNat n -&gt; r) -&gt; ((# #) -&gt; r) -&gt; r
+$bFNat :: forall (n :: Natural). Natural -&gt; SNat n -&gt; FinNat n
+</span><a href="Data.Modular.Some.html#FNat"><span class="hs-identifier hs-var hs-var hs-var hs-var">FNat</span></a></span></span></span></span><span> </span><span class="annot"><a href="#local-6989586621679019417"><span class="hs-identifier hs-type">i</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679019418"><span class="hs-identifier hs-type">sn</span></a></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-type">FN</span></a></span><span> </span><span id="local-6989586621679019417"><span class="annot"><a href="#local-6989586621679019417"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span id="local-6989586621679019418"><span class="annot"><a href="#local-6989586621679019418"><span class="hs-identifier hs-var">sn</span></a></span></span><span>
+</span><span id="line-90"></span><span>  </span><span class="hs-keyword">where</span><span>
+</span><span id="line-91"></span><span>    </span><span class="annot"><a href="Data.Modular.Some.html#FNat"><span class="hs-identifier hs-var">FNat</span></a></span><span> </span><span id="local-6989586621679019419"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019419"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span id="local-6989586621679019420"><span class="annot"><span class="annottext">SNat n
+</span><a href="#local-6989586621679019420"><span class="hs-identifier hs-var">sn</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">SNat n -&gt; Natural
+forall (n :: Natural). SNat n -&gt; Natural
+</span><span class="hs-identifier hs-var">fromSNat</span></span><span> </span><span class="annot"><span class="annottext">SNat n
+</span><a href="#local-6989586621679019420"><span class="hs-identifier hs-var">sn</span></a></span><span> </span><span class="annot"><span class="annottext">Natural -&gt; Natural -&gt; Bool
+forall a. Ord a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">&lt;=</span></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019419"><span class="hs-identifier hs-var">i</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FinNatException -&gt; FinNat n
+forall a e. Exception e =&gt; e -&gt; a
+</span><span class="hs-identifier hs-var">E.throw</span></span><span> </span><span class="annot"><span class="annottext">FinNatException
+</span><a href="Data.Modular.Some.Exception.html#ValueOverflow"><span class="hs-identifier hs-var">E.ValueOverflow</span></a></span><span>
+</span><span id="line-92"></span><span>              </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">SNat n -&gt; Natural
+forall (n :: Natural). SNat n -&gt; Natural
+</span><span class="hs-identifier hs-var">fromSNat</span></span><span> </span><span class="annot"><span class="annottext">SNat n
+</span><a href="#local-6989586621679019420"><span class="hs-identifier hs-var">sn</span></a></span><span> </span><span class="annot"><span class="annottext">Natural -&gt; Natural -&gt; Bool
+forall a. Ord a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">&lt;=</span></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><span class="hs-number">0</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FinNatException -&gt; FinNat n
+forall a e. Exception e =&gt; e -&gt; a
+</span><span class="hs-identifier hs-var">E.throw</span></span><span> </span><span class="annot"><span class="annottext">FinNatException
+</span><a href="Data.Modular.Some.Exception.html#NonPositiveUpperBound"><span class="hs-identifier hs-var">E.NonPositiveUpperBound</span></a></span><span>
+</span><span id="line-93"></span><span>              </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
+</span><span class="hs-identifier hs-var">otherwise</span></span><span>        </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; SNat n -&gt; FinNat n
+forall (n :: Natural). Natural -&gt; SNat n -&gt; FinNat n
+</span><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-var">FN</span></a></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019419"><span class="hs-identifier hs-var">i</span></a></span><span> </span><span class="annot"><span class="annottext">SNat n
+</span><a href="#local-6989586621679019420"><span class="hs-identifier hs-var">sn</span></a></span><span>
+</span><span id="line-94"></span><span>
+</span><span id="line-95"></span><span class="annot"><span class="hs-comment">{-|
+  &gt;&gt;&gt; fromFinNat zero
+  0
+-}</span></span><span>
+</span><span id="line-99"></span><span class="annot"><a href="Data.Modular.Some.html#zero"><span class="hs-identifier hs-type">zero</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679019328"><span class="annot"><a href="#local-6989586621679019328"><span class="hs-identifier hs-type">n</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">KnownNat</span></span><span> </span><span class="annot"><a href="#local-6989586621679019328"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-number">1</span></span><span class="hs-glyph">::</span><span class="annot"><span class="hs-identifier hs-type">Nat</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="hs-operator hs-type">&lt;=</span></span><span> </span><span class="annot"><a href="#local-6989586621679019328"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679019328"><span class="hs-identifier hs-type">n</span></a></span><span>
+</span><span id="line-100"></span><span id="zero"><span class="annot"><span class="annottext">zero :: forall (n :: Natural). (KnownNat n, 1 &lt;= n) =&gt; FinNat n
+</span><a href="Data.Modular.Some.html#zero"><span class="hs-identifier hs-var hs-var">zero</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; SNat n -&gt; FinNat n
+forall (n :: Natural). Natural -&gt; SNat n -&gt; FinNat n
+</span><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-var">FN</span></a></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><span class="hs-number">0</span></span><span> </span><span class="annot"><span class="annottext">SNat n
+forall (n :: Natural). KnownNat n =&gt; SNat n
+</span><span class="hs-identifier hs-var">natSing</span></span><span>
+</span><span id="line-101"></span><span id="local-6989586621679019332"><span class="annot"><a href="Data.Modular.Some.html#boundSing"><span class="hs-identifier hs-type">boundSing</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679019332"><span class="hs-identifier hs-type">n</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">SNat</span></span><span> </span><span class="annot"><a href="#local-6989586621679019332"><span class="hs-identifier hs-type">n</span></a></span></span><span>
+</span><span id="line-102"></span><span id="boundSing"><span class="annot"><span class="annottext">boundSing :: forall (n :: Natural). FinNat n -&gt; SNat n
+</span><a href="Data.Modular.Some.html#boundSing"><span class="hs-identifier hs-var hs-var">boundSing</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-type">FN</span></a></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><span class="hs-identifier">_</span></span><span> </span><span id="local-6989586621679019429"><span class="annot"><span class="annottext">SNat n
+</span><a href="#local-6989586621679019429"><span class="hs-identifier hs-var">x</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">SNat n
+</span><a href="#local-6989586621679019429"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><span id="line-103"></span><span class="annot"><a href="Data.Modular.Some.html#upcast"><span class="hs-identifier hs-type">upcast</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679019335"><span class="annot"><a href="#local-6989586621679019335"><span class="hs-identifier hs-type">m</span></a></span></span><span> </span><span id="local-6989586621679019334"><span class="annot"><a href="#local-6989586621679019334"><span class="hs-identifier hs-type">n</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">KnownNat</span></span><span> </span><span class="annot"><a href="#local-6989586621679019334"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">KnownNat</span></span><span> </span><span class="annot"><a href="#local-6989586621679019335"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679019335"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="annot"><span class="hs-operator hs-type">&lt;=</span></span><span> </span><span class="annot"><a href="#local-6989586621679019334"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679019335"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679019334"><span class="hs-identifier hs-type">n</span></a></span><span>
+</span><span id="line-104"></span><span id="upcast"><span class="annot"><span class="annottext">upcast :: forall (m :: Natural) (n :: Natural).
+(KnownNat n, KnownNat m, m &lt;= n) =&gt;
+FinNat m -&gt; FinNat n
+</span><a href="Data.Modular.Some.html#upcast"><span class="hs-identifier hs-var hs-var">upcast</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-type">FN</span></a></span><span> </span><span id="local-6989586621679019434"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019434"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span class="annot"><span class="annottext">SNat m
+</span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; SNat n -&gt; FinNat n
+forall (n :: Natural). Natural -&gt; SNat n -&gt; FinNat n
+</span><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-var">FN</span></a></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019434"><span class="hs-identifier hs-var">i</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall (n :: Natural). KnownNat n =&gt; SNat n
+</span><span class="hs-identifier hs-var">SNat</span></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679019334"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-105"></span><span>
+</span><span id="line-106"></span><span class="hs-keyword">data</span><span> </span><span id="SomeFinNat"><span class="annot"><a href="Data.Modular.Some.html#SomeFinNat"><span class="hs-identifier hs-var">SomeFinNat</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679019435"><span class="annot"><a href="#local-6989586621679019435"><span class="hs-identifier hs-type">n</span></a></span></span><span class="hs-operator">.</span><span> </span><span id="SomeFinNat"><span class="annot"><a href="Data.Modular.Some.html#SomeFinNat"><span class="hs-identifier hs-var">SomeFinNat</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679019435"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-107"></span><span id="local-6989586621679019338"><span id="local-6989586621679019339"><span class="annot"><a href="Data.Modular.Some.html#someFinNat"><span class="hs-identifier hs-type">someFinNat</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Integral</span></span><span> </span><span class="annot"><a href="#local-6989586621679019338"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Integral</span></span><span> </span><span class="annot"><a href="#local-6989586621679019339"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679019338"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679019339"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><a href="Data.Modular.Some.html#SomeFinNat"><span class="hs-identifier hs-type">SomeFinNat</span></a></span></span></span><span>
+</span><span id="line-108"></span><span id="someFinNat"><span class="annot"><span class="annottext">someFinNat :: forall a b. (Integral a, Integral b) =&gt; a -&gt; b -&gt; Maybe SomeFinNat
+</span><a href="Data.Modular.Some.html#someFinNat"><span class="hs-identifier hs-var hs-var">someFinNat</span></a></span></span><span> </span><span id="local-6989586621679019458"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679019458"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span id="local-6989586621679019459"><span class="annot"><span class="annottext">b
+</span><a href="#local-6989586621679019459"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">b
+</span><a href="#local-6989586621679019459"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">b -&gt; b -&gt; Bool
+forall a. Ord a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">&lt;=</span></span><span> </span><span class="annot"><span class="annottext">b
+</span><span class="hs-number">0</span></span><span>                     </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Maybe SomeFinNat
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span>
+</span><span id="line-109"></span><span>               </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679019458"><span class="hs-identifier hs-var">i</span></a></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; Bool
+forall a. Ord a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">&lt;</span></span><span>  </span><span class="annot"><span class="annottext">a
+</span><span class="hs-number">0</span></span><span>                     </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Maybe SomeFinNat
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span>
+</span><span id="line-110"></span><span>               </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">b -&gt; Integer
+forall a. Integral a =&gt; a -&gt; Integer
+</span><span class="hs-identifier hs-var">toInteger</span></span><span> </span><span class="annot"><span class="annottext">b
+</span><a href="#local-6989586621679019459"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">Integer -&gt; Integer -&gt; Bool
+forall a. Ord a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">&lt;=</span></span><span> </span><span class="annot"><span class="annottext">a -&gt; Integer
+forall a. Integral a =&gt; a -&gt; Integer
+</span><span class="hs-identifier hs-var">toInteger</span></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679019458"><span class="hs-identifier hs-var">i</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Maybe SomeFinNat
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span>
+</span><span id="line-111"></span><span>               </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
+</span><span class="hs-identifier hs-var">otherwise</span></span><span>                  </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">SomeFinNat -&gt; Maybe SomeFinNat
+forall a. a -&gt; Maybe a
+</span><span class="hs-identifier hs-var">Just</span></span><span> </span><span class="annot"><span class="annottext">(SomeFinNat -&gt; Maybe SomeFinNat) -&gt; SomeFinNat -&gt; Maybe SomeFinNat
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Natural
+-&gt; (forall (n :: Natural). SNat n -&gt; SomeFinNat) -&gt; SomeFinNat
+forall r. Natural -&gt; (forall (n :: Natural). SNat n -&gt; r) -&gt; r
+</span><span class="hs-identifier hs-var">withSomeSNat</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">b -&gt; Natural
+forall a b. (Integral a, Num b) =&gt; a -&gt; b
+</span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="annot"><span class="annottext">b
+</span><a href="#local-6989586621679019459"><span class="hs-identifier hs-var">n</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679019463"><span class="annot"><span class="annottext">SNat n
+</span><a href="#local-6989586621679019463"><span class="hs-identifier hs-var">sn</span></a></span></span><span class="hs-glyph">-&gt;</span><span class="annot"><span class="annottext">FinNat n -&gt; SomeFinNat
+forall (n :: Natural). FinNat n -&gt; SomeFinNat
+</span><a href="Data.Modular.Some.html#SomeFinNat"><span class="hs-identifier hs-var">SomeFinNat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Natural -&gt; SNat n -&gt; FinNat n
+forall (n :: Natural). Natural -&gt; SNat n -&gt; FinNat n
+</span><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-var">FN</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a -&gt; Natural
+forall a b. (Integral a, Num b) =&gt; a -&gt; b
+</span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679019458"><span class="hs-identifier hs-var">i</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">SNat n
+</span><a href="#local-6989586621679019463"><span class="hs-identifier hs-var">sn</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-112"></span><span class="annot"><a href="Data.Modular.Some.html#toMaybeFinNat"><span class="hs-identifier hs-type">toMaybeFinNat</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679019356"><span class="annot"><a href="#local-6989586621679019356"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679019357"><span class="annot"><a href="#local-6989586621679019357"><span class="hs-identifier hs-type">n</span></a></span></span><span class="hs-glyph">::</span><span class="annot"><span class="hs-identifier hs-type">Nat</span></span><span class="hs-special">)</span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Integral</span></span><span> </span><span class="annot"><a href="#local-6989586621679019356"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">KnownNat</span></span><span> </span><span class="annot"><a href="#local-6989586621679019357"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679019356"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679019357"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-113"></span><span id="toMaybeFinNat"><span class="annot"><span class="annottext">toMaybeFinNat :: forall a (n :: Natural).
+(Integral a, KnownNat n) =&gt;
+a -&gt; Maybe (FinNat n)
+</span><a href="Data.Modular.Some.html#toMaybeFinNat"><span class="hs-identifier hs-var hs-var">toMaybeFinNat</span></a></span></span><span> </span><span id="local-6989586621679019479"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679019479"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679019479"><span class="hs-identifier hs-var">i</span></a></span><span> </span><span class="annot"><span class="annottext">a -&gt; a -&gt; Bool
+forall a. Ord a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">&lt;</span></span><span> </span><span class="annot"><span class="annottext">a
+</span><span class="hs-number">0</span></span><span>                                                </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Maybe (FinNat n)
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span>
+</span><span id="line-114"></span><span>                </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; Integer
+forall a. Integral a =&gt; a -&gt; Integer
+</span><span class="hs-identifier hs-var">toInteger</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Proxy n -&gt; Natural
+forall (n :: Natural) (proxy :: Natural -&gt; Type).
+KnownNat n =&gt;
+proxy n -&gt; Natural
+</span><span class="hs-identifier hs-var">natVal</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Proxy n
+forall {k} (t :: k). Proxy t
+</span><span class="hs-identifier hs-var">Proxy</span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Proxy</span></span><span> </span><span class="annot"><a href="#local-6989586621679019357"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Integer -&gt; Integer -&gt; Bool
+forall a. Ord a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">&lt;=</span></span><span> </span><span class="annot"><span class="annottext">a -&gt; Integer
+forall a. Integral a =&gt; a -&gt; Integer
+</span><span class="hs-identifier hs-var">toInteger</span></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679019479"><span class="hs-identifier hs-var">i</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Maybe (FinNat n)
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span>
+</span><span id="line-115"></span><span>                </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
+</span><span class="hs-identifier hs-var">otherwise</span></span><span>
+</span><span id="line-116"></span><span>                  </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FinNat n -&gt; Maybe (FinNat n)
+forall a. a -&gt; Maybe a
+</span><span class="hs-identifier hs-var">Just</span></span><span> </span><span class="annot"><span class="annottext">(FinNat n -&gt; Maybe (FinNat n)) -&gt; FinNat n -&gt; Maybe (FinNat n)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Natural -&gt; SNat n -&gt; FinNat n
+forall (n :: Natural). Natural -&gt; SNat n -&gt; FinNat n
+</span><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-var">FN</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a -&gt; Natural
+forall a b. (Integral a, Num b) =&gt; a -&gt; b
+</span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679019479"><span class="hs-identifier hs-var">i</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall (n :: Natural). KnownNat n =&gt; SNat n
+</span><span class="hs-identifier hs-var">SNat</span></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679019357"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-117"></span><span>
+</span><span id="line-118"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679019367"><span id="local-6989586621679019482"><span class="annot"><span class="hs-identifier hs-type">Eq</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679019367"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-119"></span><span>  </span><span class="annot"><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-type">FN</span></a></span><span> </span><span id="local-6989586621679019488"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019488"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="annot"><span class="annottext">SNat n
+</span><span class="hs-identifier">_</span></span><span> </span><span id="local-6989586621679019489"><span class="annot"><span class="annottext">== :: FinNat n -&gt; FinNat n -&gt; Bool
+</span><span class="hs-operator hs-var hs-var hs-var hs-var">==</span></span></span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-type">FN</span></a></span><span> </span><span id="local-6989586621679019490"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019490"><span class="hs-identifier hs-var">y</span></a></span></span><span> </span><span class="annot"><span class="annottext">SNat n
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019488"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="annot"><span class="annottext">Natural -&gt; Natural -&gt; Bool
+forall a. Eq a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">==</span></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019490"><span class="hs-identifier hs-var">y</span></a></span><span>
+</span><span id="line-120"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679019369"><span id="local-6989586621679019494"><span id="local-6989586621679019498"><span id="local-6989586621679019502"><span id="local-6989586621679019505"><span id="local-6989586621679019508"><span id="local-6989586621679019511"><span class="annot"><span class="hs-identifier hs-type">Ord</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679019369"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">)</span></span></span></span></span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-121"></span><span>  </span><span class="annot"><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-type">FN</span></a></span><span> </span><span id="local-6989586621679019515"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019515"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="annot"><span class="annottext">SNat n
+</span><span class="hs-identifier">_</span></span><span> </span><span id="local-6989586621679019516"><span class="annot"><span class="annottext">&lt;= :: FinNat n -&gt; FinNat n -&gt; Bool
+</span><span class="hs-operator hs-var hs-var hs-var hs-var">&lt;=</span></span></span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-type">FN</span></a></span><span> </span><span id="local-6989586621679019517"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019517"><span class="hs-identifier hs-var">y</span></a></span></span><span> </span><span class="annot"><span class="annottext">SNat n
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019515"><span class="hs-identifier hs-var">x</span></a></span><span> </span><span class="annot"><span class="annottext">Natural -&gt; Natural -&gt; Bool
+forall a. Ord a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">&lt;=</span></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019517"><span class="hs-identifier hs-var">y</span></a></span><span>
+</span><span id="line-122"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679019372"><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">KnownNat</span></span><span> </span><span class="annot"><a href="#local-6989586621679019372"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">,</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-number">1</span></span><span class="hs-glyph">::</span><span class="annot"><span class="hs-identifier hs-type">Nat</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="hs-operator hs-type">&lt;=</span></span><span> </span><span class="annot"><a href="#local-6989586621679019372"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Bounded</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679019372"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-123"></span><span>  </span><span id="local-6989586621679019528"><span class="annot"><span class="annottext">minBound :: FinNat n
+</span><a href="#local-6989586621679019528"><span class="hs-identifier hs-var hs-var hs-var hs-var">minBound</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FinNat n
+forall (n :: Natural). (KnownNat n, 1 &lt;= n) =&gt; FinNat n
+</span><a href="Data.Modular.Some.html#zero"><span class="hs-identifier hs-var">zero</span></a></span><span>
+</span><span id="line-124"></span><span>  </span><span id="local-6989586621679019531"><span class="annot"><span class="annottext">maxBound :: FinNat n
+</span><a href="#local-6989586621679019531"><span class="hs-identifier hs-var hs-var hs-var hs-var">maxBound</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; SNat n -&gt; FinNat n
+forall (n :: Natural). Natural -&gt; SNat n -&gt; FinNat n
+</span><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-var">FN</span></a></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019533"><span class="hs-identifier hs-var">mo</span></a></span><span> </span><span class="annot"><span class="annottext">SNat n
+forall (n :: Natural). KnownNat n =&gt; SNat n
+</span><span class="hs-identifier hs-var">natSing</span></span><span>
+</span><span id="line-125"></span><span>    </span><span class="hs-keyword">where</span><span>
+</span><span id="line-126"></span><span>      </span><span id="local-6989586621679019533"><span class="annot"><span class="annottext">mo :: Natural
+</span><a href="#local-6989586621679019533"><span class="hs-identifier hs-var hs-var">mo</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Proxy n -&gt; Natural
+forall (n :: Natural) (proxy :: Natural -&gt; Type).
+KnownNat n =&gt;
+proxy n -&gt; Natural
+</span><span class="hs-identifier hs-var">natVal</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Proxy n
+forall {k} (t :: k). Proxy t
+</span><span class="hs-identifier hs-var">Proxy</span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Proxy</span></span><span> </span><span class="annot"><a href="#local-6989586621679019372"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; Natural -&gt; Natural
+forall a. Num a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-glyph hs-var">-</span></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><span class="hs-number">1</span></span><span>
+</span><span id="line-127"></span><span>
+</span><span id="line-128"></span><span class="hs-keyword">type</span><span> </span><span id="FinNat8"><span class="annot"><a href="Data.Modular.Some.html#FinNat8"><span class="hs-identifier hs-var">FinNat8</span></a></span></span><span>  </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-number">0x100</span></span><span class="hs-glyph">::</span><span class="annot"><span class="hs-identifier hs-type">Nat</span></span><span class="hs-special">)</span><span>
+</span><span id="line-129"></span><span class="hs-keyword">type</span><span> </span><span id="FinNat16"><span class="annot"><a href="Data.Modular.Some.html#FinNat16"><span class="hs-identifier hs-var">FinNat16</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-number">0x10000</span></span><span class="hs-glyph">::</span><span class="annot"><span class="hs-identifier hs-type">Nat</span></span><span class="hs-special">)</span><span>
+</span><span id="line-130"></span><span class="hs-keyword">type</span><span> </span><span id="FinNat32"><span class="annot"><a href="Data.Modular.Some.html#FinNat32"><span class="hs-identifier hs-var">FinNat32</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-number">0x100000000</span></span><span class="hs-glyph">::</span><span class="annot"><span class="hs-identifier hs-type">Nat</span></span><span class="hs-special">)</span><span>
+</span><span id="line-131"></span><span class="hs-keyword">type</span><span> </span><span id="FinNat64"><span class="annot"><a href="Data.Modular.Some.html#FinNat64"><span class="hs-identifier hs-var">FinNat64</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-number">0x10000000000000000</span></span><span class="hs-glyph">::</span><span class="annot"><span class="hs-identifier hs-type">Nat</span></span><span class="hs-special">)</span><span>
+</span><span id="line-132"></span><span>
+</span><span id="line-133"></span><span class="annot"><span class="hs-comment">{-|
+  A class 'CompatibleWithFNat' is a class for conversion with 'FNat' types,
+  and a class for two methods: 'fromFinNat' and 'toFinNat'.
+-}</span></span><span>
+</span><span id="line-137"></span><span class="hs-keyword">class</span><span> </span><span id="CompatibleWithFNat"><span class="annot"><a href="Data.Modular.Some.html#CompatibleWithFNat"><span class="hs-identifier hs-var">CompatibleWithFNat</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679019378"><span class="annot"><a href="#local-6989586621679019378"><span class="hs-identifier hs-type">n</span></a></span></span><span class="hs-glyph">::</span><span class="annot"><span class="hs-identifier hs-type">Nat</span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679019379"><span class="annot"><a href="#local-6989586621679019379"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-138"></span><span>  </span><span id="fromFinNat"><span class="annot"><a href="Data.Modular.Some.html#fromFinNat"><span class="hs-identifier hs-type">fromFinNat</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679019378"><span class="hs-identifier hs-type">n</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679019379"><span class="hs-identifier hs-type">a</span></a></span><span>
+</span><span id="line-139"></span><span>  </span><span id="toFinNat"><span class="annot"><a href="Data.Modular.Some.html#toFinNat"><span class="hs-identifier hs-type">toFinNat</span></a></span></span><span>   </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">KnownNat</span></span><span> </span><span class="annot"><a href="#local-6989586621679019378"><span class="hs-identifier hs-type">n</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679019379"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#FinNat"><span class="hs-identifier hs-type">FinNat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679019378"><span class="hs-identifier hs-type">n</span></a></span><span>
+</span><span id="line-140"></span><span>
+</span><span id="line-141"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679019380"><span class="annot"><a href="Data.Modular.Some.html#CompatibleWithFNat"><span class="hs-identifier hs-type">CompatibleWithFNat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679019380"><span class="hs-identifier hs-type">n</span></a></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Natural</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-142"></span><span>  </span><span id="local-6989586621679019541"><span class="annot"><span class="annottext">fromFinNat :: FinNat n -&gt; Natural
+</span><a href="Data.Modular.Some.html#fromFinNat"><span class="hs-identifier hs-var hs-var hs-var hs-var">fromFinNat</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-type">FN</span></a></span><span> </span><span id="local-6989586621679019542"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019542"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span class="annot"><span class="annottext">SNat n
+</span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019542"><span class="hs-identifier hs-var">i</span></a></span><span>
+</span><span id="line-143"></span><span>  </span><span id="local-6989586621679019551"><span class="annot"><span class="annottext">toFinNat :: KnownNat n =&gt; Natural -&gt; FinNat n
+</span><a href="Data.Modular.Some.html#toFinNat"><span class="hs-identifier hs-var hs-var hs-var hs-var">toFinNat</span></a></span></span><span> </span><span id="local-6989586621679019552"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019552"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019552"><span class="hs-identifier hs-var">i</span></a></span><span> </span><span class="annot"><span class="annottext">Natural -&gt; Natural -&gt; Bool
+forall a. Ord a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">&lt;</span></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><span class="hs-number">0</span></span><span>                          </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FinNatException -&gt; FinNat n
+forall a e. Exception e =&gt; e -&gt; a
+</span><span class="hs-identifier hs-var">E.throw</span></span><span> </span><span class="annot"><span class="annottext">FinNatException
+</span><a href="Data.Modular.Some.Exception.html#ValueUnderflow"><span class="hs-identifier hs-var">E.ValueUnderflow</span></a></span><span>
+</span><span id="line-144"></span><span>             </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Proxy n -&gt; Natural
+forall (n :: Natural) (proxy :: Natural -&gt; Type).
+KnownNat n =&gt;
+proxy n -&gt; Natural
+</span><span class="hs-identifier hs-var">natVal</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Proxy n
+forall {k} (t :: k). Proxy t
+</span><span class="hs-identifier hs-var">Proxy</span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Proxy</span></span><span> </span><span class="annot"><a href="#local-6989586621679019380"><span class="hs-identifier hs-type">n</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; Natural -&gt; Bool
+forall a. Ord a =&gt; a -&gt; a -&gt; Bool
+</span><span class="hs-operator hs-var">&lt;=</span></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019552"><span class="hs-identifier hs-var">i</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">FinNatException -&gt; FinNat n
+forall a e. Exception e =&gt; e -&gt; a
+</span><span class="hs-identifier hs-var">E.throw</span></span><span> </span><span class="annot"><span class="annottext">FinNatException
+</span><a href="Data.Modular.Some.Exception.html#ValueOverflow"><span class="hs-identifier hs-var">E.ValueOverflow</span></a></span><span>
+</span><span id="line-145"></span><span>             </span><span class="hs-glyph">|</span><span> </span><span class="annot"><span class="annottext">Bool
+</span><span class="hs-identifier hs-var">otherwise</span></span><span>                      </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; SNat n -&gt; FinNat n
+forall (n :: Natural). Natural -&gt; SNat n -&gt; FinNat n
+</span><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-var">FN</span></a></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019552"><span class="hs-identifier hs-var">i</span></a></span><span> </span><span class="annot"><span class="annottext">SNat n
+forall (n :: Natural). KnownNat n =&gt; SNat n
+</span><span class="hs-identifier hs-var">SNat</span></span><span>
+</span><span id="line-146"></span><span>
+</span><span id="line-147"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#CompatibleWithFNat"><span class="hs-identifier hs-type">CompatibleWithFNat</span></a></span><span> </span><span class="annot"><span class="hs-number">0x100</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Word8</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-148"></span><span>  </span><span id="local-6989586621679019560"><span class="annot"><span class="annottext">fromFinNat :: FinNat 256 -&gt; Word8
+</span><a href="Data.Modular.Some.html#fromFinNat"><span class="hs-identifier hs-var hs-var hs-var hs-var">fromFinNat</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-type">FN</span></a></span><span> </span><span id="local-6989586621679019561"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019561"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span class="annot"><span class="annottext">SNat 256
+</span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; Word8
+forall a b. (Integral a, Num b) =&gt; a -&gt; b
+</span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019561"><span class="hs-identifier hs-var">i</span></a></span><span>
+</span><span id="line-149"></span><span>  </span><span id="local-6989586621679019567"><span class="annot"><span class="annottext">toFinNat :: KnownNat 256 =&gt; Word8 -&gt; FinNat 256
+</span><a href="Data.Modular.Some.html#toFinNat"><span class="hs-identifier hs-var hs-var hs-var hs-var">toFinNat</span></a></span></span><span> </span><span id="local-6989586621679019568"><span class="annot"><span class="annottext">Word8
+</span><a href="#local-6989586621679019568"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; SNat 256 -&gt; FinNat 256
+forall (n :: Natural). Natural -&gt; SNat n -&gt; FinNat n
+</span><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-var">FN</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Word8 -&gt; Natural
+forall a b. (Integral a, Num b) =&gt; a -&gt; b
+</span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="annot"><span class="annottext">Word8
+</span><a href="#local-6989586621679019568"><span class="hs-identifier hs-var">i</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">SNat 256
+forall (n :: Natural). KnownNat n =&gt; SNat n
+</span><span class="hs-identifier hs-var">SNat</span></span><span>
+</span><span id="line-150"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#CompatibleWithFNat"><span class="hs-identifier hs-type">CompatibleWithFNat</span></a></span><span> </span><span class="annot"><span class="hs-number">0x10000</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Word16</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-151"></span><span>  </span><span id="local-6989586621679019575"><span class="annot"><span class="annottext">fromFinNat :: FinNat 65536 -&gt; Word16
+</span><a href="Data.Modular.Some.html#fromFinNat"><span class="hs-identifier hs-var hs-var hs-var hs-var">fromFinNat</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-type">FN</span></a></span><span> </span><span id="local-6989586621679019576"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019576"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span class="annot"><span class="annottext">SNat 65536
+</span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; Word16
+forall a b. (Integral a, Num b) =&gt; a -&gt; b
+</span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019576"><span class="hs-identifier hs-var">i</span></a></span><span>
+</span><span id="line-152"></span><span>  </span><span id="local-6989586621679019582"><span class="annot"><span class="annottext">toFinNat :: KnownNat 65536 =&gt; Word16 -&gt; FinNat 65536
+</span><a href="Data.Modular.Some.html#toFinNat"><span class="hs-identifier hs-var hs-var hs-var hs-var">toFinNat</span></a></span></span><span> </span><span id="local-6989586621679019583"><span class="annot"><span class="annottext">Word16
+</span><a href="#local-6989586621679019583"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; SNat 65536 -&gt; FinNat 65536
+forall (n :: Natural). Natural -&gt; SNat n -&gt; FinNat n
+</span><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-var">FN</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Word16 -&gt; Natural
+forall a b. (Integral a, Num b) =&gt; a -&gt; b
+</span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="annot"><span class="annottext">Word16
+</span><a href="#local-6989586621679019583"><span class="hs-identifier hs-var">i</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">SNat 65536
+forall (n :: Natural). KnownNat n =&gt; SNat n
+</span><span class="hs-identifier hs-var">SNat</span></span><span>
+</span><span id="line-153"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#CompatibleWithFNat"><span class="hs-identifier hs-type">CompatibleWithFNat</span></a></span><span> </span><span class="annot"><span class="hs-number">0x100000000</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Word32</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-154"></span><span>  </span><span id="local-6989586621679019590"><span class="annot"><span class="annottext">fromFinNat :: FinNat 4294967296 -&gt; Word32
+</span><a href="Data.Modular.Some.html#fromFinNat"><span class="hs-identifier hs-var hs-var hs-var hs-var">fromFinNat</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-type">FN</span></a></span><span> </span><span id="local-6989586621679019591"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019591"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span class="annot"><span class="annottext">SNat 4294967296
+</span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; Word32
+forall a b. (Integral a, Num b) =&gt; a -&gt; b
+</span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019591"><span class="hs-identifier hs-var">i</span></a></span><span>
+</span><span id="line-155"></span><span>  </span><span id="local-6989586621679019597"><span class="annot"><span class="annottext">toFinNat :: KnownNat 4294967296 =&gt; Word32 -&gt; FinNat 4294967296
+</span><a href="Data.Modular.Some.html#toFinNat"><span class="hs-identifier hs-var hs-var hs-var hs-var">toFinNat</span></a></span></span><span> </span><span id="local-6989586621679019598"><span class="annot"><span class="annottext">Word32
+</span><a href="#local-6989586621679019598"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; SNat 4294967296 -&gt; FinNat 4294967296
+forall (n :: Natural). Natural -&gt; SNat n -&gt; FinNat n
+</span><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-var">FN</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Word32 -&gt; Natural
+forall a b. (Integral a, Num b) =&gt; a -&gt; b
+</span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="annot"><span class="annottext">Word32
+</span><a href="#local-6989586621679019598"><span class="hs-identifier hs-var">i</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">SNat 4294967296
+forall (n :: Natural). KnownNat n =&gt; SNat n
+</span><span class="hs-identifier hs-var">SNat</span></span><span>
+</span><span id="line-156"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Data.Modular.Some.html#CompatibleWithFNat"><span class="hs-identifier hs-type">CompatibleWithFNat</span></a></span><span> </span><span class="annot"><span class="hs-number">0x10000000000000000</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Word64</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-157"></span><span>  </span><span id="local-6989586621679019605"><span class="annot"><span class="annottext">fromFinNat :: FinNat 18446744073709551616 -&gt; Word64
+</span><a href="Data.Modular.Some.html#fromFinNat"><span class="hs-identifier hs-var hs-var hs-var hs-var">fromFinNat</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-type">FN</span></a></span><span> </span><span id="local-6989586621679019606"><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019606"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span class="annot"><span class="annottext">SNat 18446744073709551616
+</span><span class="hs-identifier">_</span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; Word64
+forall a b. (Integral a, Num b) =&gt; a -&gt; b
+</span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="annot"><span class="annottext">Natural
+</span><a href="#local-6989586621679019606"><span class="hs-identifier hs-var">i</span></a></span><span>
+</span><span id="line-158"></span><span>  </span><span id="local-6989586621679019612"><span class="annot"><span class="annottext">toFinNat :: KnownNat 18446744073709551616 =&gt;
+Word64 -&gt; FinNat 18446744073709551616
+</span><a href="Data.Modular.Some.html#toFinNat"><span class="hs-identifier hs-var hs-var hs-var hs-var">toFinNat</span></a></span></span><span> </span><span id="local-6989586621679019613"><span class="annot"><span class="annottext">Word64
+</span><a href="#local-6989586621679019613"><span class="hs-identifier hs-var">i</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Natural -&gt; SNat 18446744073709551616 -&gt; FinNat 18446744073709551616
+forall (n :: Natural). Natural -&gt; SNat n -&gt; FinNat n
+</span><a href="Data.Modular.Some.html#FN"><span class="hs-identifier hs-var">FN</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Word64 -&gt; Natural
+forall a b. (Integral a, Num b) =&gt; a -&gt; b
+</span><span class="hs-identifier hs-var">fromIntegral</span></span><span> </span><span class="annot"><span class="annottext">Word64
+</span><a href="#local-6989586621679019613"><span class="hs-identifier hs-var">i</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">SNat 18446744073709551616
+forall (n :: Natural). KnownNat n =&gt; SNat n
+</span><span class="hs-identifier hs-var">SNat</span></span><span>
+</span><span id="line-159"></span></pre></body></html>
